@@ -1,9 +1,10 @@
 import streamlit as st
-from email_generator import generate_email
-from Extract_details import extract_details_from_jd
-from company_research import research_company
-from resume_text import load_resume
-import os
+from RecruitReach_AI.prompts.prompt import base_prompt
+from RecruitReach_AI.models.llm_manager import get_llm
+from RecruitReach_AI.Resume.resume_parser import load_resume
+from RecruitReach_AI.Comapny_Reserch.company_research import research_company
+from RecruitReach_AI.Comapny_Reserch.extractComapnyDetails import extract_details_from_jd
+from RecruitReach_AI.Email.email_generator import generate_email
 import re
 import io
 from PyPDF2 import PdfReader
@@ -50,6 +51,8 @@ def main():
         st.session_state.job_source = None
     if 'resume_filename' not in st.session_state:
         st.session_state.resume_filename = None
+    if 'email_subject' not in st.session_state:
+        st.session_state.email_subject = None
 
     # Create two columns for layout
     col1, col2 = st.columns([3, 2])
@@ -73,12 +76,11 @@ def main():
 
         # Resume section
         st.header("📄 Resume")
-        resume_choice = st.radio("Choose resume option:", ["Use Default Resume", "Upload Resume"])
+        resume_choice = st.radio("Choose resume option:", ["Use Default Resume", "Upload Resume"],index=None)
         st.session_state.resume_choice = resume_choice
-        
         if resume_choice == "Use Default Resume":
             st.info("Using default resume from your profile")
-        else:
+        elif resume_choice == "Upload Resume":
             resume_uploader = st.file_uploader("Upload your resume", type=['pdf', 'docx'], key="resume_upload")
             if resume_uploader is not None:
                 try:
@@ -94,16 +96,16 @@ def main():
         st.write("")
         
         # Extract details button in a smaller column
-        if job_desc:
-            extract_col1, extract_col2, extract_col3 = st.columns([1, 2, 1])
-            with extract_col1:
+        extract_col1, extract_col2, extract_col3 = st.columns([1, 2, 1])
+        with extract_col1:
                 if st.button("🔍 Extract Details", type="primary"):
-                    try:
-                        with st.spinner("Extracting details from job description..."):
-                            st.session_state.extracted_details = extract_details_from_jd(job_desc)
-                            st.success("Details extracted successfully!")
-                    except Exception as e:
-                        st.error(f"Error extracting details: {str(e)}")
+                    if job_desc:
+                        try:
+                            with st.spinner("Extracting details from job description..."):
+                                st.session_state.extracted_details = extract_details_from_jd(job_desc)
+                                st.success("Details extracted successfully!")
+                        except Exception as e:
+                            st.error(f"Error extracting details: {str(e)}")
 
     # Add styles
     st.markdown("""
@@ -220,7 +222,8 @@ def main():
                             st.session_state.recruiter_email = recruiter_email
                             st.session_state.job_position = job_position
                             st.session_state.job_source = job_source
-                            st.session_state.generated_email = email_content
+                            st.session_state.generated_email = email_content.get("body")
+                            st.session_state.email_subject = email_content.get("subject")
                             st.success("Email generated successfully!")
                             st.rerun()
                     except Exception as e:
@@ -271,7 +274,8 @@ def main():
                             st.session_state.company_name,
                             feedback=feedback
                         )
-                        st.session_state.generated_email = email_content
+                        st.session_state.generated_email = email_content.get("body")
+                        st.session_state.email_subject = email_content.get("subject")
                         st.success("Email regenerated successfully!")
                         st.rerun()
                 except Exception as e:

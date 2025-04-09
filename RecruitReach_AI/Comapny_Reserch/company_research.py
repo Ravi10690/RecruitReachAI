@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from googlesearch import search
-from RecruitReach_AI.src.models.llm_manager import get_llm
+from RecruitReach_AI.models.llm_manager import get_llm
 
 def research_company(company_name):
     try:
@@ -32,8 +32,7 @@ def research_company(company_name):
 if __name__ == "__main__":
     company_name = input("Enter the company name: ")
     info = research_company(company_name)
-    if info:
-        print(f"Company Name: {info['name']}")
-        print(f"Description: {info['description']}")
+    if info:    
+        print(info)
     else:
         print("Failed to retrieve company information.")

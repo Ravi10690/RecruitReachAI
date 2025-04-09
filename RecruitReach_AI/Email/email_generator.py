@@ -1,16 +1,12 @@
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+
 from RecruitReach_AI.prompts.prompt import base_prompt
-from RecruitReach_AI.src.models.llm_manager import get_llm
-from load_jd import load_jds_from_file
-from resume_text import load_resume
-from company_research import research_company
-from Extract_details import extract_details_from_jd
+from RecruitReach_AI.models.llm_manager import get_llm
+from RecruitReach_AI.Resume.resume_parser import load_resume
+from RecruitReach_AI.Comapny_Reserch.company_research import research_company
+from RecruitReach_AI.Comapny_Reserch.extractComapnyDetails import extract_details_from_jd
+from RecruitReach_AI.schema.schema import GenerateEmail
 from langchain_core.prompts import ChatPromptTemplate
 
-# Load environment variables from .env file
-load_dotenv()
 
 def generate_email(job_description, 
                    company_info, 
@@ -33,7 +29,7 @@ def generate_email(job_description,
     prompt_messages.append(("human", "generate the email"))
     
     chat_prompt = ChatPromptTemplate(prompt_messages)
-    chain = chat_prompt | llm
+    chain = chat_prompt | llm.with_structured_output(GenerateEmail)
     
     # Create input dictionary
     input_dict = {
@@ -54,12 +50,27 @@ def generate_email(job_description,
 
     
     # Generate the email content using the LLM
-    return response.content
+
+    return {"subject": response.subject, "body": response.body}
 
 
 
 if __name__ == "__main__":
-    job_desc = load_jds_from_file("JD.txt")
+    job_desc = """𝐇𝐢𝐫𝐢𝐧𝐠 𝐔𝐩𝐝𝐚𝐭𝐞𝐬 with PW (PhysicsWallah)
+
+𝐏𝐨𝐬𝐢𝐭𝐢𝐨𝐧- MIS Associate 
+𝐑𝐨𝐥𝐞- Individual Contributor
+𝐃𝐞𝐩𝐚𝐫𝐭𝐦𝐞𝐧𝐭- MIS
+𝐃𝐞𝐬𝐢𝐠𝐧𝐚𝐭𝐢𝐨𝐧- Associate
+𝐉𝐨𝐢𝐧𝐢𝐧𝐠- Immediate (within 7 days)
+𝐄𝐱𝐩𝐞𝐫𝐢𝐞𝐧𝐜𝐞 𝐑𝐞𝐪𝐮𝐢𝐫𝐞𝐝- Minimum of 2 years in MIS (SQL, Tableau, Microsoft office)
+
+𝐋𝐨𝐜𝐚𝐭𝐢𝐨𝐧𝐬:
+📍 Rohtak Haryana Vidyapeeth
+
+𝐑𝐞𝐜𝐫𝐮𝐢𝐭𝐞𝐫 𝐃𝐞𝐭𝐚𝐢𝐥𝐬: Ms Samridhi Goyal (samridhi.goyal@pw.live)
+
+Interested candidates can directly mail CV at samridhi.goyal@pw.live"""
     resume = load_resume()
     extracted_details = extract_details_from_jd(job_desc)
     company_name = extracted_details.company_name if extracted_details.company_name else input("Enter the company name: ")

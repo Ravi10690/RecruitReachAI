@@ -1,0 +1,6 @@
+[openai]
+OPENAI_API_KEY = "your_opni_api_key_here"
+
+[email]
+sender = "your_email@example.com"
+app_password = "your_email_app_password_here"

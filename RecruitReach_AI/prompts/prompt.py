@@ -5,7 +5,7 @@ I will provide:
 2. The job description (JD).
 3. A brief overview of the company.
 
-Using this, please generate a professional and personalized email that I can send to a recruiter or hiring manager. The email should:
+Using this, please generate a professional and personalized email and subject of the email that I can send to a recruiter or hiring manager. The email should:
 
 - Be polite, confident, and enthusiastic.
 - Include a clear subject line.

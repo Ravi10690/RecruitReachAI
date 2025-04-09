@@ -1,13 +1,6 @@
-import os
-from dotenv import load_dotenv
-from models.llmManager import get_llm
-from models import JobDetails
+from RecruitReach_AI.models.llm_manager import get_llm
+from RecruitReach_AI.schema.schema import JobDetails
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import JsonOutputParser
-from load_jd import load_jds_from_file
-
-# Load environment variables from .env file
-load_dotenv(override=True)
 
 def extract_details_from_jd(job_description):
     # Initialize the ChatOpenAI
@@ -34,8 +27,5 @@ def extract_details_from_jd(job_description):
 
 
 if __name__ == "__main__":
-    # Call the function to extract details from the job description
-    job_description = load_jds_from_file("JD.txt")
-    extracted_details = extract_details_from_jd(job_description)
-    print(f"Extracted Details: {extracted_details}")
+    pass
 
