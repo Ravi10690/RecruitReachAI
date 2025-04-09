@@ -5,6 +5,7 @@ from RecruitReach_AI.Resume.resume_parser import load_resume
 from RecruitReach_AI.Comapny_Reserch.company_research import research_company
 from RecruitReach_AI.Comapny_Reserch.extractComapnyDetails import extract_details_from_jd
 from RecruitReach_AI.Email.email_generator import generate_email
+from RecruitReach_AI.Email.email_sender import EmailSender
 import re
 import io
 from PyPDF2 import PdfReader
@@ -254,6 +255,35 @@ def main():
                    unsafe_allow_html=True
                )
                st.success("Copied to clipboard!")
+            
+            # Send Email button
+            if st.button("📤 Send Email", type="primary"):
+                try:
+                    email_sender = EmailSender()
+                    
+                    # Get PDF content
+                    pdf_content = None
+                    pdf_filename = None
+                    if st.session_state.resume_choice == "Use Default Resume":
+                        pdf_content = "RecruitReach_AI/data/Ravi_Ahuja_Resume.pdf"
+                    elif st.session_state.uploaded_resume:
+                        pdf_content = st.session_state.uploaded_resume
+                        pdf_filename = st.session_state.resume_filename
+                    
+                    # Send email
+                    success = email_sender.send_email(
+                        receiver_email=st.session_state.recruiter_email,
+                        html_body=st.session_state.generated_email,
+                        subject=st.session_state.email_subject,
+                        pdf_content=pdf_content
+                    )
+                    
+                    if success:
+                        st.success("✅ Email sent successfully!")
+                    else:
+                        st.error("Failed to send email. Please check your email settings.")
+                except Exception as e:
+                    st.error(f"Error sending email: {str(e)}")
             
             # Regenerate with feedback section
             st.markdown("### Feedback")

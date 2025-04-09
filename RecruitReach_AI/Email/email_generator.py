@@ -79,11 +79,14 @@ Interested candidates can directly mail CV at samridhi.goyal@pw.live"""
     job_source = input("Enter the job source: ")
     company_info = research_company(company_name)
 
-    print(generate_email(job_desc,
+    gem = generate_email(job_desc,
                           company_info,
                           resume,
                           recruiter_email,
                           job_position,
                           job_source,
-                          company_name))
+                          company_name)
+    print(gem.get("body"))
+    
+
 

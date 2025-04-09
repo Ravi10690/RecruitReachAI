@@ -50,7 +50,7 @@ class TomlParser:
             KeyError: If the section or key doesn't exist
         """
         try:
-            return self._config_data[section][key]
+            return self._config_data.get(section, {}).get(key)
         except KeyError:
             raise KeyError(f"Config value not found for section '{section}' and key '{key}'")
 
@@ -68,7 +68,7 @@ class TomlParser:
             KeyError: If the section doesn't exist
         """
         try:
-            return dict(self._config_data[section])
+            return dict(self._config_data.get(section, {}))
         except KeyError:
             raise KeyError(f"Section '{section}' not found in config")
 
@@ -85,4 +85,3 @@ class TomlParser:
 if __name__ == "__main__":
     # Example usage
     parser = TomlParser()
-    print(parser.get_section('openai'))

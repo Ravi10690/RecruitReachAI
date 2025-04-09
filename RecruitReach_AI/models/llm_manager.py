@@ -1,5 +1,6 @@
 from langchain_openai import ChatOpenAI
 from RecruitReach_AI.utils.toml_parser import TomlParser
+parser = TomlParser()
 OPENAI_API_KEY = TomlParser().get_value("openai", "OPENAI_API_KEY")
 
 def get_llm(model_name="gpt-4o-mini", temperature=0.2):
@@ -10,9 +11,12 @@ def get_llm(model_name="gpt-4o-mini", temperature=0.2):
     return llm
 
 
+
+
 if __name__ == "__main__":
     # Example usage
-    llm = get_llm()
-    print(llm.invoke("hi"))
-    print("LLM loaded successfully.")
+    pass
+    # llm = get_llm()
+    # print(llm.invoke("hi"))
+    # print("LLM loaded successfully.")
     # You can now use the `llm` object for further processing
