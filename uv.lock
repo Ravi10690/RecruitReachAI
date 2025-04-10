@@ -1125,7 +1125,7 @@ wheels = [
 ]
 
 [[package]]
-name = "ravi"
+name = "recuitreachai"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
@@ -1141,6 +1141,7 @@ dependencies = [
     { name = "pypdf" },
     { name = "pypdf2" },
     { name = "python-docx" },
+    { name = "requests" },
     { name = "streamlit" },
     { name = "tomli" },
 ]
@@ -1159,6 +1160,7 @@ requires-dist = [
     { name = "pypdf", specifier = ">=5.4.0" },
     { name = "pypdf2", specifier = ">=3.0.1" },
     { name = "python-docx", specifier = ">=1.1.2" },
+    { name = "requests", specifier = ">=2.32.3" },
     { name = "streamlit", specifier = ">=1.44.1" },
     { name = "tomli", specifier = ">=2.2.1" },
 ]
