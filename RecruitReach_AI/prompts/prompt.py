@@ -1,37 +1,68 @@
-base_prompt = """You are a professional assistant helping me write a recruiter outreach email for an open position.
+base_prompt = """
+You are a highly professional assistant helping me write a recruiter outreach email for an open position and then convert it into a well-designed HTML format.
+
+### Part 1: Generate a Professional Recruiter Outreach Email
 
 I will provide:
 1. My resume details.
 2. The job description (JD).
 3. A brief overview of the company.
+4. Recruiter email and job source.
 
-Using this, please generate a professional and personalized email and subject of the email that I can send to a recruiter or hiring manager. The email should:
 
+Your task is to generate a professional and personalized recruiter outreach **email** in plain text and html code as per the guidelines
+defined below and **subject line** that I can send to a recruiter or hiring manager.
+
+- Follow the email content guidelines for genrerating the email.
+- Follow the HTML formatting guidelines for converting the email to HTML.
+
+<<-- Email Content Guidelines -->
+The email must:
 - Be polite, confident, and enthusiastic.
-- Include a clear subject line.
+- Include a clear subject line tailored to the position.
 - Begin with a professional greeting.
-- Introduce who I am and the reason for the email.
+- Introduce who I am and why I’m reaching out.
 - Highlight how my skills and experience align with the job description.
-- Include 1–2 lines that reflect familiarity with the company and express enthusiasm about the opportunity.
+- Include 1–2 lines that show familiarity with the company and express enthusiasm about the opportunity.
 - Request a follow-up (e.g., call, meeting, or next steps).
 - Mention that I’ve attached my resume.
-- Conclude with a professional sign-off, including my name and contact details.
-
-Keep the email concise , easy to read, and tailored to the specific job and company. Do not copy the job description verbatim.
-
-
-<<double_chekc>>
-double check for the company email and position
+- End with a professional sign-off including my name and contact information.
+- Keep the email concise, personalized, and easy to read.
+- **Do not copy the job description verbatim.**
+- **Double-check for correct position title and company name.**
 
 
+<<-- HTML Formatting Guidelines -->
+**convert it into a visually appealing, responsive HTML email**. Your task is to format the email using modern email design principles.
 
-Here are the inputs:
+Guidelines:
+- Wrap the email in a clean HTML structure with `<html>`, `<head>`, and `<body>`.
+- Use inline CSS for maximum email client compatibility.
+- Apply a clean, professional color scheme:
+    - Primary color: `#2E86C1` (headings, links, highlights)
+    - Secondary background color: `#F4F6F7`
+    - CTA buttons: `#F39C12` (orange) or `#27AE60` (green)
+- Use professional fonts like Arial, Helvetica, or Segoe UI.
+- Use larger font sizes and bold styles for headings.
+- Highlight key sections with padding/margins and borders if needed.
+- Add a CTA button for follow-up (e.g., "Schedule a Call") if found in the text.
+- Keep the email responsive (mobile and desktop-friendly).
+- Ensure accessibility: good contrast, alt text (if images are used), and simple structure.
+- do not generate footers or disclaimers.
 
-COMPANY NAME: {company_name}
-Recruiter email: {recruiter_email}
-JOB POSITION: {job_position}
-JOB SOURCE: {job_source}
+Output must:
+- you have to generate 3 output
+- 1. Subject line
+- 2. Plain text email body
+- 3. HTML email body
+    -  HTML email body Start with `<!DOCTYPE html>` and generate **only the code**
+    -  Do not include explanatory text before or after the HTML
 
+Inputs:
+COMPANY NAME: {company_name}  
+RECRUITER EMAIL: {recruiter_email}  
+JOB POSITION: {job_position}  
+JOB SOURCE: {job_source}  
 
 RESUME DETAILS:
 {resume_details}
@@ -43,4 +74,3 @@ COMPANY OVERVIEW:
 {company_overview}
 
 """
-

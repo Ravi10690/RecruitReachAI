@@ -1,13 +1,15 @@
 import streamlit as st
-from RecruitReach_AI.prompts.prompt import base_prompt
-from RecruitReach_AI.models.llm_manager import get_llm
-from RecruitReach_AI.Resume.resume_parser import load_resume
-from RecruitReach_AI.Comapny_Reserch.company_research import research_company
-from RecruitReach_AI.Comapny_Reserch.extractComapnyDetails import extract_details_from_jd
-from RecruitReach_AI.Email.email_generator import generate_email
-from RecruitReach_AI.Email.email_sender import EmailSender
+from RecruitReachAI.RecruitReach_AI.prompts.prompt import base_prompt
+from RecruitReachAI.RecruitReach_AI.models.llm_manager import get_llm
+from RecruitReachAI.RecruitReach_AI.Resume.resume_parser import load_resume
+from RecruitReachAI.RecruitReach_AI.Comapny_Reserch.company_research import research_company
+from RecruitReachAI.RecruitReach_AI.Comapny_Reserch.extractComapnyDetails import extract_details_from_jd
+from RecruitReachAI.RecruitReach_AI.Email.email_generator import generate_email
+from RecruitReachAI.RecruitReach_AI.Email.email_sender import EmailSender
 import re
 import io
+import html
+from bs4 import BeautifulSoup
 from PyPDF2 import PdfReader
 from docx import Document
 
@@ -54,6 +56,42 @@ def main():
         st.session_state.resume_filename = None
     if 'email_subject' not in st.session_state:
         st.session_state.email_subject = None
+
+    # Add styles
+    st.markdown("""
+    <style>
+    .job-details-form {
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: white;
+    }
+    .email-preview {
+        border: 2px solid #4CAF50;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: white;
+        font-family: Arial, sans-serif;
+        white-space: pre-wrap;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .stMarkdown {
+        background-color: white;
+    }
+    iframe {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    textarea {
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
     # Create two columns for layout
     col1, col2 = st.columns([3, 2])
@@ -107,28 +145,6 @@ def main():
                                 st.success("Details extracted successfully!")
                         except Exception as e:
                             st.error(f"Error extracting details: {str(e)}")
-
-    # Add styles
-    st.markdown("""
-    <style>
-    .job-details-form {
-        border: 1px solid #ddd;
-        padding: 20px;
-        border-radius: 5px;
-        background-color: white;
-    }
-    .email-preview {
-        border: 2px solid #4CAF50;
-        padding: 20px;
-        border-radius: 8px;
-        background-color: white;
-        font-family: Arial, sans-serif;
-        white-space: pre-wrap;
-        margin: 20px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
     with col2:
         # Form for details
@@ -238,23 +254,108 @@ def main():
         email_col1, email_col2 = st.columns([3, 1])
         
         with email_col1:
-            st.text_area(
-                "Email Content",
-                st.session_state.generated_email,
-                height=600,
-                key="email_display"
+            # Display email subject and HTML preview in a container
+            st.markdown("#### Email Preview")
+            
+            # Email stats and preview mode selector
+            stats_col1, stats_col2 = st.columns([2, 1])
+            
+            plain_text = st.session_state.generated_email.get("text")
+            word_count = len(plain_text.split())
+            char_count = len(plain_text)
+            
+            with stats_col1:
+                st.caption(f"📝 {word_count} words | {char_count} characters")
+            
+            with stats_col2:
+                view_mode = st.radio(
+                    "View as:",
+                    ["Rich HTML", "Plain Text"],
+                    horizontal=True,
+                    key="preview_mode"
+                )
+            
+            # Subject line
+            st.markdown(
+                f"""
+                <div style="margin-bottom: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 4px;">
+                    <strong>Subject:</strong> {st.session_state.email_subject}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            
+            # Preview container
+            with st.container():
+                if view_mode == "Rich HTML":
+                    st.markdown("""
+                        <div style="padding: 20px; background-color: white; border-radius: 8px; border: 1px solid #ddd;">
+                    """, unsafe_allow_html=True)
+                    st.components.v1.html(
+                        st.session_state.generated_email.get("html"),
+                        height=600,
+                        scrolling=True
+                    )
+                    st.markdown("</div>", unsafe_allow_html=True)
+                else:
+                    # Display plain text in a monospace font
+                    st.text_area(
+                        "",
+                        plain_text,
+                        height=600,
+                        key="plain_text_preview",
+                        help="Plain text version of the email"
+                    )
+            
+            # Keep hidden text areas for copying
+            st.markdown(
+                f"""
+                <div style="display: none;">
+                    <textarea id="email_subject">{st.session_state.email_subject}</textarea>
+                    <textarea id="email_content">{st.session_state.generated_email}</textarea>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
        
         with email_col2:
             st.markdown("### Actions")
             
-            # Copy button
+            # Copy options
+            copy_option = st.radio(
+                "Copy Format:",
+                ["HTML Format", "Plain Text"],
+                key="copy_format"
+            )
+            
             if st.button("📋 Copy to Clipboard"):
-               st.write(
-                   f'<script>navigator.clipboard.writeText("{st.session_state.generated_email}");</script>',
-                   unsafe_allow_html=True
-               )
-               st.success("Copied to clipboard!")
+                if copy_option == "HTML Format":
+                    st.markdown(
+                        """
+                        <script>
+                            var subject = document.getElementById('email_subject').value;
+                            var content = document.getElementById('email_content').value;
+                            navigator.clipboard.writeText(content);
+                        </script>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                else:
+                    # Strip HTML tags for plain text
+                    st.markdown(
+                        """
+                        <script>
+                            var subject = document.getElementById('email_subject').value;
+                            var content = document.getElementById('email_content').value;
+                            var tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = content;
+                            var plainText = 'Subject: ' + subject + '\\n\\n' + tempDiv.textContent;
+                            navigator.clipboard.writeText(plainText);
+                        </script>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                st.success("Copied to clipboard!")
             
             # Send Email button
             if st.button("📤 Send Email", type="primary"):
@@ -273,7 +374,7 @@ def main():
                     # Send email
                     success = email_sender.send_email(
                         receiver_email=st.session_state.recruiter_email,
-                        html_body=st.session_state.generated_email,
+                        html_body=st.session_state.generated_email.get("html"),
                         subject=st.session_state.email_subject,
                         pdf_content=pdf_content
                     )

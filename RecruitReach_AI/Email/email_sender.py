@@ -4,7 +4,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.utils import formataddr
-
 import os
 from typing import Union, Optional
 from io import BytesIO
@@ -62,7 +61,7 @@ class EmailSender:
             message["Subject"] = email_subject
 
             # Attach HTML content
-            html_part = MIMEText(html_body, "plain")
+            html_part = MIMEText(html_body, "html")
             message.attach(html_part)
 
             # Handle PDF attachment

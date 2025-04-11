@@ -1,29 +1,18 @@
-import requests
-from bs4 import BeautifulSoup
-from googlesearch import search
-from RecruitReach_AI.models.llm_manager import get_llm
 
-def research_company(company_name):
+from RecruitReach_AI.models.llm_manager import get_llm
+from RecruitReach_AI.Company_Reserch.ResearchMehtods.openi_web_search import get_company_info as get_company_info_openi
+from RecruitReach_AI.Comapny_Reserch.ResearchMehtods.google_search import get_company_info as get_company_info_google
+def research_company(company_name, method ='openai'):
     try:
-        # Search for company information using Google
-        search_results = search(f"{company_name} company overview", num_results=2)
-    
-        # Extract relevant information from the search results
-        company_info = {}
-        for result in search_results:
-            # Fetch the webpage content
-            response = requests.get(result)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Extract relevant text from the webpage
-            company_info['description'] = soup.get_text()
-            company_info['name'] = company_name
-            break  # For now, just use the first result
-        
-        llm = get_llm()
-        # Use LLM to summarize or extract specific information if needed
-        summary = llm.invoke(f"summarize this : {company_info['description']}")
-        return summary.content
+        if method == 'google':
+            company_info = get_company_info_google(company_name)
+            llm = get_llm()
+            # Use LLM to summarize or extract specific information if needed
+            summary = llm.invoke(f"summarize this : {company_info['description']}")
+            return summary.content
+        elif method == "openai":
+            company_info = get_company_info_openi(company_name)
+            return company_info
     except Exception as e:
         print(f"Error researching company: {e}")
         return None

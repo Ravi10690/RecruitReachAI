@@ -5,6 +5,7 @@ from RecruitReach_AI.Resume.resume_parser import load_resume
 from RecruitReach_AI.Comapny_Reserch.company_research import research_company
 from RecruitReach_AI.Comapny_Reserch.extractComapnyDetails import extract_details_from_jd
 from RecruitReach_AI.schema.schema import GenerateEmail
+# from RecruitReach_AI.Email.email_formatter import format_email_to_html
 from langchain_core.prompts import ChatPromptTemplate
 
 
@@ -26,7 +27,7 @@ def generate_email(job_description,
     if feedback:
         prompt_messages.append(("system", f"Please regenerate the email with the following feedback: {feedback}"))
     
-    prompt_messages.append(("human", "generate the email"))
+    prompt_messages.append(("human", "generate the HTML email code"))
     
     chat_prompt = ChatPromptTemplate(prompt_messages)
     chain = chat_prompt | llm.with_structured_output(GenerateEmail)
@@ -46,14 +47,10 @@ def generate_email(job_description,
     if feedback:
         input_dict["feedback"] = feedback
     
-    response = chain.invoke(input_dict)
-
-    
-    # Generate the email content using the LLM
-
-    return {"subject": response.subject, "body": response.body}
-
-
+    response = chain.invoke(input_dict)   
+    # Generate the email content using the LLM and format it to HTML
+    # formatted_body = format_email_to_html(response.body)
+    return {"subject": response.subject, "body" : {"text": response.body_text, "html": response.body_html}}
 
 if __name__ == "__main__":
     job_desc = """𝐇𝐢𝐫𝐢𝐧𝐠 𝐔𝐩𝐝𝐚𝐭𝐞𝐬 with PW (PhysicsWallah)
@@ -86,7 +83,6 @@ Interested candidates can directly mail CV at samridhi.goyal@pw.live"""
                           job_position,
                           job_source,
                           company_name)
-    print(gem.get("body"))
-    
+    print(gem.get("html"))
 
 

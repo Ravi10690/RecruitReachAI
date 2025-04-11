@@ -7,4 +7,6 @@ class JobDetails(BaseModel):
 
 class GenerateEmail(BaseModel):
     subject: str = Field(..., description="Subject of the email")
-    body: str = Field(..., description="Body of the email")
+    body_text: str = Field(..., description="plain text Body of the email")
+    body_html: str = Field(..., description="HTML Body of the email")
+
