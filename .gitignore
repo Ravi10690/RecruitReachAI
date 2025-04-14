@@ -8,4 +8,4 @@ wheels/
 
 # Virtual environments
 .venv
-*.toml
+config.toml
