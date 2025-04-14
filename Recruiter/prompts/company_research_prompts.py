@@ -41,5 +41,7 @@ preparing for a job application or interview.
 JOB_DETAILS_EXTRACTION_PROMPT = """
 Given the following job description, please extract the company name,
 recruiter email, and job position. Return the results in a structured format.
+double check the details of comapny name does not look like the company name leave it blank
 If you are not sure about any of these details, leave them blank.
+{job_description}
 """

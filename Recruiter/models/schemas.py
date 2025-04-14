@@ -12,16 +12,11 @@ from pydantic import BaseModel, Field, EmailStr
 class JobDetails(BaseModel):
     """Schema for job details extracted from job descriptions."""
     
-    company_name: str = Field(
-        default="",
-        description="Name of the company offering the job"
-    )
-    recruiter_email: str = Field(
-        default="",
+    company_name: str = Field(..., description="Name of the company offering the job")
+    recruiter_email: str = Field(...,
         description="Email address of the recruiter or hiring manager"
     )
-    job_position: str = Field(
-        default="",
+    job_position: str = Field(...,
         description="Title or position of the job being offered"
     )
 
