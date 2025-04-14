@@ -13,13 +13,13 @@ from typing import Optional, Dict, Any, Tuple
 from PyPDF2 import PdfReader
 from docx import Document
 
-from Recruiter.core.resume.resume_parser import ResumeParser
-from Recruiter.core.company_research.company_researcher import CompanyResearcher
-from Recruiter.core.email.email_generator import EmailGenerator
-from Recruiter.core.cover_letter.cover_letter_generator import CoverLetterGenerator
-from Recruiter.services.email_service.email_sender import EmailSenderService
-from Recruiter.utils.config.config_manager import ConfigManager
-from Recruiter.utils.file_utils.path_manager import PathManager
+from RecruitReachAI.Recruiter.core.resume.resume_parser import ResumeParser
+from RecruitReachAI.Recruiter.core.company_research.company_researcher import CompanyResearcher
+from RecruitReachAI.Recruiter.core.email.email_generator import EmailGenerator
+from RecruitReachAI.Recruiter.core.cover_letter.cover_letter_generator import CoverLetterGenerator
+from RecruitReachAI.Recruiter.services.email_service.email_sender import EmailSenderService
+from RecruitReachAI.Recruiter.utils.config.config_manager import ConfigManager
+from RecruitReachAI.Recruiter.utils.file_utils.path_manager import PathManager
 
 
 # Email validation regex pattern
