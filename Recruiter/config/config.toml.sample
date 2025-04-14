@@ -1,0 +1,19 @@
+# RecruitReach2 Configuration File
+# Copy this file to config.toml and update with your values
+
+[openai]
+# Your OpenAI API key
+OPENAI_API_KEY = ""
+
+[email]
+# Your email address
+sender_email = ""
+# Your name
+sender_name = ""
+# SMTP server (default for Gmail)
+smtp_server = "smtp.gmail.com"
+# SMTP port (default for Gmail)
+smtp_port = 587
+# Your email app password
+# For Gmail, you need to create an app password: https://support.google.com/accounts/answer/185833
+app_password = ""
