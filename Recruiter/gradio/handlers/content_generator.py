@@ -6,6 +6,7 @@ import gradio as gr
 
 from Recruiter.utils.config.config_manager import ConfigManager
 from Recruiter.core.company_research.company_researcher import CompanyResearcher
+from Recruiter.core.ExtractDetails.extrac_details_from_JD import extract_details_from_job_description
 from Recruiter.core.email.email_generator import EmailGenerator
 from Recruiter.core.cover_letter.cover_letter_generator import CoverLetterGenerator
 from Recruiter.gradio.handlers.file_handler import process_resume
@@ -32,7 +33,7 @@ def extract_details(api_key: str, job_desc: str) -> Tuple[str, str, str]:
     
     try:
         company_researcher = CompanyResearcher(api_key=api_key)
-        details = company_researcher.extract_details_from_job_description(job_desc)
+        details = extract_details_from_job_description(job_desc, api_key=api_key)
         return (
             details.company_name,
             details.recruiter_email,
