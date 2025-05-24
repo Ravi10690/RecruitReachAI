@@ -1,3 +1,9 @@
+---
+title: RecruitReachAI
+app_file: app.py
+sdk: gradio
+sdk_version: 5.30.0
+---
 # RecruitReach2
 
 An AI-powered application for generating personalized recruiter outreach emails and cover letters for job applications.

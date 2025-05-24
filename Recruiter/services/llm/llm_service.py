@@ -7,8 +7,9 @@ This module provides a service for interacting with language models.
 import os
 from typing import Any, Optional, Type, TypeVar, Dict
 
+from langchain.chat_models import init_chat_model
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from pydantic import BaseModel
 
 from Recruiter.utils.config.config_manager import ConfigManager
@@ -26,7 +27,7 @@ class LLMService:
     
     def __init__(
         self,
-        model_name: str = "gpt-4o-mini",
+        model_name: str = "gpt-4.1-mini",
         temperature: float = 0.2,
         api_key: Optional[str] = None
     ):
@@ -66,7 +67,14 @@ class LLMService:
         Returns:
             Generated text.
         """
-        response = self.llm.invoke(prompt)
+        # Create a simple chat template with the prompt as a human message
+        chat_prompt = ChatPromptTemplate([
+            ("human", prompt)
+        ])
+        
+        # Create chain and invoke
+        chain = chat_prompt | self.llm
+        response = chain.invoke({})
         return response.content
     
     def generate_with_template(
@@ -86,9 +94,11 @@ class LLMService:
         Returns:
             Generated text or structured output.
         """
-        # Create prompt template
-        prompt_messages = [("system", template), ("human", "generate")]
-        chat_prompt = ChatPromptTemplate(prompt_messages)
+        # Create prompt template with system and human messages
+        chat_prompt = ChatPromptTemplate.from_messages([
+            SystemMessagePromptTemplate.from_template(template),
+            HumanMessagePromptTemplate.from_template("Please generate the content based on the above instructions.")
+        ])
         
         # Create chain with or without structured output
         if output_schema:
